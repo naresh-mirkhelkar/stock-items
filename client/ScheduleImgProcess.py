@@ -28,7 +28,7 @@ def captureImages():
         cv2.imshow("preview", frame)
         rval, frame = vc.read()
         # rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2BGRA)
-        imgname = str(datetime.datetime.now().strftime("%x%H%M")).replace("/","").replace(":","") + '.jpeg'
+        imgname = str(datetime.datetime.now().strftime("%x%H%M")).replace("/", "").replace(":", "") + '.jpeg'
         key = cv2.waitKey(1000)
         cv2.imwrite(imgname,frame)
             # if key == 27: # exit on ESC
@@ -41,8 +41,8 @@ def captureImages():
     content_type = 'image/jpeg'
     headers = {'content-type': content_type}
     img = cv2.imread(imgname)
-    _,img_encoded=cv2.imencode('.jpg',img)
-    response = requests.post(test_url + imgname , data=img_encoded.tostring(), headers=headers)
+    _,img_encoded=cv2.imencode('.jpg', img)
+    response = requests.post(test_url + imgname, data=img_encoded.tostring(), headers=headers)
     print(json.loads(response.text))
 
 schedule.every(10).seconds.do(captureImages)
