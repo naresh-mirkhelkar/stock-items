@@ -7,6 +7,7 @@ from flask import Flask, request, Response
 import controller.StockServices as ss
 import cv2
 import jsonpickle
+import numpy as np
 
 
 app = Flask(__name__)
@@ -37,7 +38,10 @@ def healthcheck():
 @app.route('/api/processimage', methods=['POST'])
 def processimage():
     print("INSIDE PROCESS IMAGE")
-    supObj = ss.objectDetection(request, net, args)
+    # convert string of image data to uint8
+    nparr = np.frombuffer(request.data, np.uint8)
+    fileName = request.args.get('filename')
+    supObj = ss.objectDetection(nparr, net, args, fileName)
     # encode response using jsonpickle
     response_pickled = jsonpickle.encode(supObj)
     return Response(response=response_pickled, status=200, mimetype="application/json")

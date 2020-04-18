@@ -26,10 +26,11 @@ COLORS = np.random.uniform(0, 255, size=(len(CLASSES), 3))
 print("[INFO] loading model...")
 
 
-def objectDetection(request, net, args):
-    r = request
+def objectDetection(nparr, net, args, filename):
+    # req = request
     # convert string of image data to uint8
-    nparr = np.frombuffer(r.data, np.uint8)
+    # nparr = np.frombuffer(req.data, np.uint8)
+
     # decode image
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
@@ -82,10 +83,10 @@ def objectDetection(request, net, args):
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, COLORS[idx], 2)
 
 
-    fileName = r.args.get("filename")
-    print("Query parm for filanem:%s", fileName)
+    # fileName = req.args.get("filename")
+    print("Query parm for filanem:%s", filename)
 
-    cv2.imwrite('processed-images/' + fileName, img)
+    cv2.imwrite('processed-images/' + filename, img)
 
     # # build a response dict to send back to client
     # response = {'message': 'image received. size={}x{}'.format(img.shape[1], img.shape[0])
@@ -95,6 +96,6 @@ def objectDetection(request, net, args):
     #
     # print(response_pickled)
 
-    supImage = si.SupervisableImage(fileName, 'size={}x{}'.format(img.shape[1], img.shape[0]), it.ImageType.JPEG)
+    supImage = si.SupervisableImage(filename, 'size={}x{}'.format(img.shape[1], img.shape[0]), it.ImageType.JPEG)
 
     return supImage
