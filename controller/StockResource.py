@@ -37,13 +37,14 @@ def healthcheck():
 
 @app.route('/api/processimage', methods=['POST'])
 def processimage():
-    print("INSIDE PROCESS IMAGE")
+    print("-----Begin Image processing-----")
     # convert string of image data to uint8
     nparr = np.frombuffer(request.data, np.uint8)
     fileName = request.args.get('filename')
     supObj = ss.objectDetection(nparr, net, args, fileName)
     # encode response using jsonpickle
     response_pickled = jsonpickle.encode(supObj)
+    print("-----End Image processing-----")
     return Response(response=response_pickled, status=200, mimetype="application/json")
 
 
