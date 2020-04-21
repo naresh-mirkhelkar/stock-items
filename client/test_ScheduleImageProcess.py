@@ -2,7 +2,7 @@ import sys
 sys.path.append('client')
 
 import unittest
-import ScheduleImgProcess as sip
+import client.ScheduleImgProcess as sip
 
 class TestScheduleImageProcess(unittest.TestCase):
 

@@ -5,6 +5,7 @@ sys.path.append('model')
 import unittest
 import StockResource as sr
 import cv2
+import os
 
 
 class TestStockResource(unittest.TestCase):
@@ -35,6 +36,20 @@ class TestStockResource(unittest.TestCase):
         print(response.data)
         self.assertEqual(response.status_code, 200)
         self.assertIsNotNone(response.data)
+
+    def test_loop_through_all_images(self):
+        content_type = 'image/jpeg'
+        headers = {'content-type': content_type}
+        for filename in os.listdir('test-images'):
+            if filename.endswith('.jpeg'):
+                print("Processing image:" + filename)
+                img = cv2.imread('test-images/' + filename)
+                _, img_encoded = cv2.imencode('.jpg', img)
+                response = self.tester.post('/api/processimage?filename=' + filename, data=img_encoded.tostring(),
+                                            headers=headers)
+                print(response.data)
+                self.assertEqual(response.status_code, 200)
+                self.assertIsNotNone(response.data)
 
 if __name__ == '__main__':
     unittest.main()

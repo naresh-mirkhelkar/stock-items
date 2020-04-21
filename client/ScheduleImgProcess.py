@@ -54,6 +54,7 @@ def captureImages():
         raise err
 
 
-schedule.every(5).seconds.do(captureImages)
-while True:
-    schedule.run_pending()
+if __name__ == '__main__':
+    schedule.every(5).seconds.do(captureImages)
+    while True:
+        schedule.run_pending()
