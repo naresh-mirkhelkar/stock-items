@@ -7,23 +7,21 @@ import cv2
 import model.SupervisableImage as si
 import model.PredictionResult as pr
 import model.ImageType as it
-# import ConfigParser
-#
-# configParser = ConfigParser.RawConfigParser()
-# config.readfp(open(r'config/img-config.txt'))
-# exlusion-list = config.get('image-config-values', 'exclusion-list')
+import configparser as cp
 
-# initialize the list of class labels MobileNet SSD was trained to
-# detect, then generate a set of bounding box colors for each class
-LABELS = ["background", "aeroplane", "bicycle", "bird", "boat",
-	"bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
-	"dog", "horse", "motorbike", "person", "pottedplant", "sheep",
-	"sofa", "train", "tvmonitor"]
+# Get the configuration data
+config = cp.RawConfigParser()
+config.read(r'config/img-config.txt')
+excludelist = config.get('image-config-values', 'exclusion-list')
+confidence = config.get('image-config-values', 'confidence')
+labellist = config.get('image-config-values', 'label-list')
 
-LIST_IGNORE = set(["background", "aeroplane", "bicycle", "bird", "boat",
-	 "bus", "car", "cat", "chair", "cow", "diningtable",
-	"dog", "horse", "motorbike", "person", "pottedplant", "sheep",
-	"sofa", "train", "tvmonitor"])
+# initialize the caffemodel pretrained data
+LABELS = labellist.split(',')
+LIST_IGNORE = excludelist.split(',')
+
+print("LABELS:", LABELS)
+print("LIST_IGNORE:", LIST_IGNORE)
 COLORS = np.random.uniform(0, 255, size=(len(LABELS), 3))
 
 # load our serialized model from disk
@@ -31,16 +29,11 @@ print("[INFO] loading model...")
 
 
 def objectDetection(nparr, net, args, filename):
-    # req = request
-    # convert string of image data to uint8
-    # nparr = np.frombuffer(req.data, np.uint8)
 
     # decode image
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
     print("length %s, wideth %s", (img.shape[0]), img.shape[1])
-
-    #cv2.imshow("Preview", img)
 
     (h, w) = img.shape[:2]
     print(" %s,w %s", (h, w))
@@ -93,12 +86,9 @@ def objectDetection(nparr, net, args, filename):
             # prResult = prResult.getImageDetails()
             prResult.setShelfEmptyStatus(False)
 
-
-    # fileName = req.args.get("filename")
     print("Query parm for filanem:%s", filename)
 
     cv2.imwrite('processed-images/' + filename, img)
-
 
     # This helps in identifying image properties for metrics later
     supImage = si.SupervisableImage(filename, 'size={}x{}'.format(img.shape[1], img.shape[0]), it.ImageType.JPEG)

@@ -11,7 +11,37 @@ Schedule takes snaps of identified location for every schedule sec/minute and se
 The server collects, the images, runs Deep Neural Network process based on pretrained network of CaffeModel, Identifies the image objects and encloses them in a box.
 The object is iddentified based on certain confidence settings. At this stage, a confidence setting of 0.5 is set for object detection.
 
-Before running any tests, below is the prequisite...
+
+### Tech Stack used for the application:
+The below software is expected to be available on the machine since installation differs by Operating Systems
+However, the following url provides installation steps for different OS
+
+https://realpython.com/courses/installing-python-windows-macos-linux/
+
+1. Python 3.7
+2. pip3
+
+
+### Modules:
+These modules can be installed by running the requirements.txt file mentioned below.
+1. Opencv -- Installed as opencv-contrib-python
+2. numpy
+3. jsonpickle
+4. schedule
+5. requests
+6. json
+7. datetime
+8. os
+9. unittest
+10. gunicorn
+
+## IDE
+PyCharm --> I have used this, but even Visual Studio Code is very convinient for running this project.
+
+
+Before running any tests, below is the pre-requisite. Some of the commands may have to be run under 'sudo', if the current user don't have
+enough privileges.
+
 1. Install all the requirements byt running the below command...
 ``` pip3 install -r requirements.txt```
 
@@ -19,9 +49,11 @@ This will install all the required modules on the intended machine.
 
 ### Running test from command line....
 
+Open terminal, navigate to the root folder of the code and execute the below command
+
 ```python3 -m unittest controller/test_StockResource.py```
 
-The above test runs all the images from test-images folder, processes and places them in process-images folder.
+This test runs all the images from test-images folder, processes and places them in process-images folder.
 
 Open each image to see the identified objects in an enclosed box. 
 
@@ -40,22 +72,7 @@ Once the webserver is up and running, find the IP address and port of the server
 Change the scheduler's time based on need. Currently it is set up for 10 secs, which helps in testing.
 
 
-Run the client using...
+Open another terminal and run the client using (if you are using RaspberryPI, copy the client code and execute in RPI's terminal)...
 
 ``` python3 client/ScheduleImgProcess.py```
 
-### Tech Stack:
-1. Python 3.7
-2. pip3
-3. gunicorn
-
-### Modules:
-1. Opencv -- Installed as opencv-contrib-python
-2. numpy
-3. jsonpickle
-4. schedule
-5. requests
-6. json
-7. datetime
-8. os
-9. unittest

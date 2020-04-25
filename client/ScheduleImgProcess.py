@@ -3,6 +3,7 @@ import json
 import cv2
 import datetime
 import schedule
+from termcolor import colored
 
 def captureImages():
 
@@ -47,11 +48,14 @@ def captureImages():
     content_type = 'image/jpeg'
     headers = {'content-type': content_type}
     img = cv2.imread(imgname)
-    _,img_encoded=cv2.imencode('.jpg', img)
-    err, response = requests.post(test_url + imgname, data=img_encoded.tostring(), headers=headers)
-    print(json.loads(response.text))
-    if err is not None:
-        raise err
+    _,img_encoded = cv2.imencode('.jpg', img)
+    processRes = requests.post(test_url + imgname, data=img_encoded.tostring(), headers=headers)
+    print(processRes.content)
+    processedImage = json.loads(processRes.content)
+    print("IS SHELF EMPTY:", processedImage['isShelfEmpty'])
+    if str(processedImage['isShelfEmpty']) == 'True':
+        # In real world, you will send an alert or generate a task here
+        print(colored('EMPTY BAY. PLEASE REFILL!', 'red'))
 
 
 if __name__ == '__main__':
