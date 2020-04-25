@@ -29,7 +29,7 @@ class TestStockResource(unittest.TestCase):
         # tester = sr.app.test_client()
         content_type = 'image/jpeg'
         headers = {'content-type': content_type}
-        filename = 'diff-sizes-bottle.jpeg'
+        filename = 'diff-sizes-object.jpeg'
         img = cv2.imread('test-images/' + filename)
         _, img_encoded = cv2.imencode('.jpg', img)
         response = self.tester.post('/api/processimage?filename=' + filename, data=img_encoded.tostring(), headers=headers)

@@ -7,7 +7,7 @@ import schedule
 def captureImages():
 
     cv2.namedWindow("preview")
-    vc = cv2.VideoCapture(0)
+    cam_handle = cv2.VideoCapture(0)
 
     # create a default image name
     imgname = "testfilenamewithdate"
@@ -15,8 +15,8 @@ def captureImages():
     addr = 'http://192.168.86.37:5000'
     test_url = addr + '/api/processimage?filename='
 
-    if vc.isOpened(): # try to get the first frame
-        rval, frame = vc.read()
+    if cam_handle.isOpened():
+        rval, frame = cam_handle.read()
     else:
         print("Video camera is not attached!")
         raise Exception('Camera not attached or OpenCV not able to work with camera!')
@@ -27,10 +27,10 @@ def captureImages():
         while rval:
             while loop > 0:
                 cv2.imshow("preview", frame)
-                rval, frame = vc.read()
+                rval, frame = cam_handle.read()
                 loop = loop -1
             cv2.imshow("preview", frame)
-            rval, frame = vc.read()
+            rval, frame = cam_handle.read()
             # rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2BGRA)
             imgname = str(datetime.datetime.now().strftime("%x%H%M")).replace("/", "").replace(":", "") + '.jpeg'
             cv2.waitKey(1000)
@@ -39,7 +39,7 @@ def captureImages():
             break
 
         cv2.destroyWindow("preview")
-        vc.release()
+        cam_handle.release()
     except:
         raise Exception('Failed to get frames from OpenCV')
 
@@ -55,6 +55,6 @@ def captureImages():
 
 
 if __name__ == '__main__':
-    schedule.every(5).seconds.do(captureImages)
+    schedule.every(10).seconds.do(captureImages)
     while True:
         schedule.run_pending()

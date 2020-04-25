@@ -1,26 +1,30 @@
 import sys
 sys.path.append('controller')
 sys.path.append('model')
-import jsonpickle
+
 import numpy as np
 import cv2
 import model.SupervisableImage as si
+import model.PredictionResult as pr
 import model.ImageType as it
-
-
+# import ConfigParser
+#
+# configParser = ConfigParser.RawConfigParser()
+# config.readfp(open(r'config/img-config.txt'))
+# exlusion-list = config.get('image-config-values', 'exclusion-list')
 
 # initialize the list of class labels MobileNet SSD was trained to
 # detect, then generate a set of bounding box colors for each class
-CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
+LABELS = ["background", "aeroplane", "bicycle", "bird", "boat",
 	"bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
 	"dog", "horse", "motorbike", "person", "pottedplant", "sheep",
 	"sofa", "train", "tvmonitor"]
 
-IGNORE = set(["background", "aeroplane", "bicycle", "bird", "boat",
+LIST_IGNORE = set(["background", "aeroplane", "bicycle", "bird", "boat",
 	 "bus", "car", "cat", "chair", "cow", "diningtable",
 	"dog", "horse", "motorbike", "person", "pottedplant", "sheep",
 	"sofa", "train", "tvmonitor"])
-COLORS = np.random.uniform(0, 255, size=(len(CLASSES), 3))
+COLORS = np.random.uniform(0, 255, size=(len(LABELS), 3))
 
 # load our serialized model from disk
 print("[INFO] loading model...")
@@ -48,6 +52,9 @@ def objectDetection(nparr, net, args, filename):
     net.setInput(blob)
     detections = net.forward()
 
+    # Create end result object and assume no object is found
+    prResult = pr.PredictionResult(filename,True)
+
     # loop over the detections
     for i in np.arange(0, detections.shape[2]):
         # extract the confidence (i.e., probability) associated with
@@ -63,7 +70,7 @@ def objectDetection(nparr, net, args, filename):
 
             # if the predicted class label is in the set of classes
             # we want to ignore then skip the detection
-            if CLASSES[idx] in IGNORE:
+            if LABELS[idx] in LIST_IGNORE:
                 continue
 
             # compute the (x, y)-coordinates of the bounding box for
@@ -82,20 +89,18 @@ def objectDetection(nparr, net, args, filename):
             cv2.putText(img, label, (startX, y),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, COLORS[idx], 2)
 
+            # since the object is identied, set the value to true
+            # prResult = prResult.getImageDetails()
+            prResult.setShelfEmptyStatus(False)
+
 
     # fileName = req.args.get("filename")
     print("Query parm for filanem:%s", filename)
 
     cv2.imwrite('processed-images/' + filename, img)
 
-    # # build a response dict to send back to client
-    # response = {'message': 'image received. size={}x{}'.format(img.shape[1], img.shape[0])
-    #             }
-    # # encode response using jsonpickle
-    # response_pickled = jsonpickle.encode(response)
-    #
-    # print(response_pickled)
 
+    # This helps in identifying image properties for metrics later
     supImage = si.SupervisableImage(filename, 'size={}x{}'.format(img.shape[1], img.shape[0]), it.ImageType.JPEG)
 
-    return supImage
+    return prResult
